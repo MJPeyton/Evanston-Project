@@ -85,3 +85,33 @@ leaflet(arrest_data_lonlat) %>%
              blur = 30, max = 0.05, radius = 15)
 ```
 
+##All Evanston Police Activity
+```{r}
+pdata <- read.csv("https://data.cityofevanston.org/resource/t5g5-xgby.csv?$limit=200000")
+
+pdata$location <- as.character(pdata$location)
+
+pdata <- pdata %>%
+  filter(location != "")
+
+pdata$loc <- pdata$location
+
+pdata$loc <- pdata$loc %>%
+  substring(8)
+
+pdata$loc <- pdata$loc %>%
+  str_sub(1, str_length(pdata$loc)-1)
+
+pdata <- pdata %>%
+  separate(col = loc, c("lon", "lat"), sep = " ")
+
+pdata$lon <- as.numeric(pdata$lon)
+pdata$lat <- as.numeric(pdata$lat)
+```
+This is a heatmap of all police activity in Evanston.
+```{r}
+leaflet(pdata) %>% 
+  addProviderTiles(providers$CartoDB.DarkMatter) %>%
+  addHeatmap(lng = ~lon, lat = ~lat,
+             blur = 20, radius = 8)
+```
