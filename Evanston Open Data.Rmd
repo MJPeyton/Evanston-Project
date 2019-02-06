@@ -9,7 +9,6 @@ This file is for exploratory research for Northwestern University's City of Evan
 Deadline: Monday, April 1 @ 3:00 PM
 
 ```{r}
-
 ## Libraries
 install.packages("ggmap")
 install.packages("leaflet")
