@@ -110,8 +110,9 @@ pdata$lat <- as.numeric(pdata$lat)
 ```
 This is a heatmap of all police activity in Evanston.
 ```{r}
-leaflet(pdata) %>% 
+pdata %>%
+  leaflet() %>% 
   addProviderTiles(providers$CartoDB.DarkMatter) %>%
   addHeatmap(lng = ~lon, lat = ~lat,
-             blur = 20, radius = 8)
+             blur = 20, radius = 8) 
 ```
