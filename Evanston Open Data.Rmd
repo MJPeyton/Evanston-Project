@@ -14,13 +14,14 @@ install.packages("ggmap")
 install.packages("leaflet")
 install.packages("leaflet.extras")
 
-
 library(ggplot2)
 library(ggmap)
 library(tidyverse)
 library(leaflet)
 library(leaflet.extras)
 library(htmlwidgets)
+
+theme_set(theme_linedraw())
 ```
 
 
@@ -116,3 +117,109 @@ pdata %>%
   addHeatmap(lng = ~lon, lat = ~lat,
              blur = 20, radius = 8) 
 ```
+
+#Tree Information
+```{r}
+## Read in Data
+tdata <- read.csv("Trees_data.csv")
+
+##Set Geo
+tdata$location <- as.character(tdata$the_geom)
+
+tdata <- tdata %>%
+  filter(location != "")
+
+tdata$loc <- tdata$location
+
+tdata$loc <- tdata$loc %>%
+  substring(8)
+
+tdata$loc <- tdata$loc %>%
+  str_sub(1, str_length(x$loc)-1)
+
+tdata <- tdata %>%
+  separate(col = loc, c("lon", "lat"), sep = " ")
+
+tdata$lon <- as.numeric(tdata$lon)
+tdata$lat <- as.numeric(tdata$lat)
+```
+
+## Types of Trees
+```{r}
+tdata %>%
+  group_by(Species) %>%
+  count(sort=TRUE) %>%
+  head(30)
+
+```
+
+## Stop and Frisk
+
+Data from https://data.cityofevanston.org/browse?q=Stop%20and%20Frisk&sortBy=relevance
+
+```{r}
+sfdata <- read.csv("Stop_and_Frisk.csv")
+```
+
+By Race
+```{r}
+sfdata %>%
+  group_by(Race) %>%
+  ggplot(aes(Race)) +
+  geom_bar() +
+  coord_flip() +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 1300)) 
+  
+```
+
+By Reason
+```{r}
+sfdata %>%
+  mutate(Reason.Code.Description = fct_rev(fct_infreq(Reason.Code.Description))) %>%
+  ggplot(aes(Reason.Code.Description)) +
+  geom_bar() +
+  coord_flip() +
+  scale_y_continuous(expand = c(0,0))
+```
+
+```{r}
+sfdata %>%
+  group_by(Race) %>%
+  ggplot(aes(Race)) +
+  geom_bar() +
+  coord_flip() +
+  facet_grid(~Enforcement) +
+  scale_y_continuous(expand = c(0,0))
+```
+
+```{r}
+sfdata %>%
+  filter(grepl('STREET', Reason.Code.Description)) %>%
+  ggplot(aes(Race, Age)) +
+  geom_violin()
+```
+
+```{r}
+sfdata %>%
+  group_by(Reason.Code.Description, Enforcement) %>%
+  summarise (n = n()) %>%
+  mutate(freq = n / sum(n)) %>%
+  filter(Enforcement == "ARREST") %>%
+  print(n=15)
+```
+
+```{r}
+sfdata %>%
+  group_by(Race, Enforcement) %>%
+  summarise (n = n()) %>%
+  mutate(freq = n / sum(n)) %>%
+  filter(Enforcement == "ARREST")
+```
+
+## Evanston Population Overall
+
+```{r}
+pop <- read.csv("https://data.cityofevanston.org/resource/j228-4hwk.csv")
+
+```
+
