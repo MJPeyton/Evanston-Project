@@ -16,6 +16,7 @@ library(tidyverse)
 library(leaflet)
 library(leaflet.extras)
 library(htmlwidgets)
+library(rgdal)
 
 theme_set(theme_linedraw())
 ```
@@ -219,7 +220,6 @@ pop <- read.csv("https://data.cityofevanston.org/resource/j228-4hwk.csv")
 ```
 
 ##Evanston Salary Information
-
 ```{r}
 saldata <- read.csv("https://data.cityofevanston.org/resource/qehy-v72q.csv")
 ```
@@ -227,5 +227,58 @@ saldata <- read.csv("https://data.cityofevanston.org/resource/qehy-v72q.csv")
 ```{r}
 saldata %>%
   arrange(desc(earnings_amount))
+```
+
+## Evanston Restaurant Info
+```{r}
+## Food Establishment Businesses with Inspections 2018-2019
+restdata <- read.csv("https://data.cityofevanston.org/resource/x9f3-wjav.csv")
+
+### Get Lat and Lon from Point
+    restdata$location <- as.character(restdata$location)
+    
+    restdata <- restdata %>%
+      filter(location != "")
+    
+    restdata$loc <- restdata$location
+    
+    restdata$loc <- restdata$loc %>%
+      substring(8)
+    
+    restdata$loc <- restdata$loc %>%
+      str_sub(1, str_length(restdata$loc)-1)
+    
+    restdata <- restdata %>%
+      separate(col = loc, c("lon", "lat"), sep = " ")
+    
+    restdata$lon <- as.numeric(restdata$lon)
+    restdata$lat <- as.numeric(restdata$lat)
+
+## Food Establishment Violations
+viodata <- read.csv("https://data.cityofevanston.org/resource/rgdf-vw4g.csv")
+
+## Food Establishment Inspections
+inspdata<- read.csv("https://data.cityofevanston.org/resource/dj7x-d2cq.csv")
+
+inspdata$inspection_date <- as.Date(as.character(inspdata$inspection_date))
+```
+Join data
+```{r}
+
+jresdata <- inner_join(restdata, inspdata)
+
+jresdata %>%
+  group_by(business_license) %>%
+  slice(which.max(inspection_date))
+
+```
+Map most recent scores
+```{r}
+pal <- colorNumeric("RdYlBu", domain = jresdata$inspection_score)
+
+leaflet() %>%
+  addCircleMarkers(lng=jresdata$lon, lat=jresdata$lat, popup = jresdata$business_name, stroke = FALSE, fillColor = pal(jresdata$inspection_score)) %>%
+  addProviderTiles(providers$CartoDB.Positron)
+    
 ```
 
