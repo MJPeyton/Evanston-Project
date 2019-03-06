@@ -1,5 +1,13 @@
+devtools::install_github("ricardo-bion/ggradar", 
+                         dependencies=TRUE)
+
+install.packages("fmsb")
+
 library(tidyverse)
 library(ggplot2)
+library(ggradar)
+library(scales)
+library(fmsb)
 
 nhgis <- read_csv("census data/nhgis0003_ds233_20175_2017_place.csv")
 
@@ -34,7 +42,7 @@ theme_set(theme_nu())
 ## Population and Race
 
 data_race <- nhgis %>%
-  select(PLACEA,
+  select(GISJOIN,
     AHY1E001, 
     AHY2E002,
     AHY2E003,
@@ -44,7 +52,7 @@ data_race <- nhgis %>%
     AHZAE012)
 
 names(data_race) <- c(
-  "Place_ID",
+  "GISJOIN",
   "Total_population",
   "White",
   "Black",
@@ -78,14 +86,14 @@ data_race <- data_race %>%
 data_race %>%
   ggplot(aes(Per_White, Total_population)) +
   geom_point(alpha = .05) +
-  geom_point(data=evgg, color="#4F2984", size = 2) +
+  geom_point(data=evanston, color="#4F2984", size = 2) +
   scale_y_log10() 
 
 
 ## Education
 
 data_edu <- nhgis %>%
-  select(PLACEA,
+  select(GISJOIN,
          AHY1E001,
          AH04E017, 
          AH04E022,
@@ -94,7 +102,7 @@ data_edu <- nhgis %>%
          AH04E025)
 
 names(data_edu) <- c(
-  "Place_ID",
+  "GISJOIN",
   "Total_population",
   "HS",
   "BS",
@@ -123,20 +131,39 @@ data_edu <- data_edu %>%
 ## Median Household Income
 
 data_houseincome <- nhgis %>%
-  select(PLACEA, 
+  select(GISJOIN, 
          AH1PE001)
 
 names(data_houseincome) <- c(
-  "Place_ID",
+  "GISJOIN",
   "Median_Income")
 
 
 str(data_houseincome)
 
+## Location Details
+
+data_loc <- nhgis %>%
+  select(GISJOIN,
+         STATE,
+         PLACE)
+
+names(data_loc) <- c(
+  "GISJOIN",
+  "State",
+  "Place")
+
+
+str(data_loc)
+
 ## Combine all data subsets
 
-data <- left_join(data_race, data_edu, by="Place_ID") %>%
-  left_join(data_houseincome, by="Place_ID")
+data <- right_join(data_loc, data_race, by="GISJOIN") %>%
+  right_join(data_edu, by="GISJOIN") %>%
+  right_join(data_houseincome, by="GISJOIN")
+
+## Trying to make rownames for radar
+## column_to_rownames(data, var = paste(data$Place, data$State, sep = ", "))
 
 ## STR Check
 
@@ -145,7 +172,24 @@ str(data)
 ## Evanston Check
 
 evanston <- data %>%
-  filter(Place_ID == "24582")
+  filter(GISJOIN == "G17024582")
+
+## Evanston Radar
+
+radar <- data %>%
+  tail(4) %>%
+  select(c(4, 5, 15, 16))
+
+evanston_radar <- evanston %>%
+  select(c(4, 5, 15, 16))
+
+radarcol <- c("red", "blue", "orange", "purple")
+
+fillcol <- radarcol
+
+radarchart(radar, maxmin = FALSE, cglty=1, cglcol="#DCDCDC", plty=1, pcol = radarcol) 
+
+## Better examples: http://www.r-graph-gallery.com/143-spider-chart-with-saveral-individuals/
 
 ## Close to Evanston
 
