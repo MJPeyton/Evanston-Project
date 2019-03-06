@@ -44,6 +44,8 @@ https://www.socialexplorer.com
 Download: https://www.it.northwestern.edu/software/arcgis/index.html
 QGis: Mac accessible
 
+# Other Resources
+https://rconsortium.github.io/censusguide/
 
 
 [] Best matches for Evanston, IL?
