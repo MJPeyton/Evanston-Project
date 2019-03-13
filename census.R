@@ -1,8 +1,19 @@
+install.packages("distances")
+install.packages("tidyverse")
+install.packages("ggplot2")
+install.packages("scales")
+install.packages("read_csv")
+install.packages("Rfast")
+install.version("na.omit")
+install.packages("remotes")
+
 library(tidyverse)
 library(ggplot2)
 library(scales)
+library(distances)
+library(Rfast)
 
-nhgis <- read_csv("census data/nhgis0003_ds233_20175_2017_place.csv")
+nhgis <- read.csv("census data/nhgis0003_ds233_20175_2017_place.csv")
 
 theme_nu <- function () {
   custom_font <- "Avenir Next"
@@ -81,7 +92,6 @@ data_race %>%
   geom_point(alpha = .05) +
   geom_point(data=evanston, color="#4F2984", size = 2) +
   scale_y_log10() 
-
 
 ## Education
 
@@ -170,15 +180,26 @@ evanston <- data %>%
 
 row_data <- column_to_rownames(data, var = "GISJOIN")
 
-num_data <- row_data[,c(4:16)]
+data_scale <- row_data[,c(3:15)]
 
-ma_data <- as.matrix(data[,c(4:16)])
+data_scale <- as.matrix(data_scale)
 
-data_scale <- scale(ma_data)
+data_scale <- scale(data_scale)
 
-## 
+data_scale <- omit.na(data_scale)
+
+## Evanston
+
+ev_data_scale <- data_scale["G17024582", ]
+
+ev_data_matrix <- as.matrix(ev_data_scale)
+
+## Distance between Evanston and all other rows
+
+## Try distancematrix
+## distancevector(ev_data_scale, data_scale, type = "euclidean")
+
+dista(data_scale, ev_data_matrix, type = "euclidean")
 
 
-
-## Close to Evanston
 
