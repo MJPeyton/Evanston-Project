@@ -1,13 +1,6 @@
-devtools::install_github("ricardo-bion/ggradar", 
-                         dependencies=TRUE)
-
-install.packages("fmsb")
-
 library(tidyverse)
 library(ggplot2)
-library(ggradar)
 library(scales)
-library(fmsb)
 
 nhgis <- read_csv("census data/nhgis0003_ds233_20175_2017_place.csv")
 
@@ -153,7 +146,6 @@ names(data_loc) <- c(
   "State",
   "Place")
 
-
 str(data_loc)
 
 ## Combine all data subsets
@@ -174,22 +166,19 @@ str(data)
 evanston <- data %>%
   filter(GISJOIN == "G17024582")
 
-## Evanston Radar
+## Normalize data
 
-radar <- data %>%
-  tail(4) %>%
-  select(c(4, 5, 15, 16))
+row_data <- column_to_rownames(data, var = "GISJOIN")
 
-evanston_radar <- evanston %>%
-  select(c(4, 5, 15, 16))
+num_data <- row_data[,c(4:16)]
 
-radarcol <- c("red", "blue", "orange", "purple")
+ma_data <- as.matrix(data[,c(4:16)])
 
-fillcol <- radarcol
+data_scale <- scale(ma_data)
 
-radarchart(radar, maxmin = FALSE, cglty=1, cglcol="#DCDCDC", plty=1, pcol = radarcol) 
+## 
 
-## Better examples: http://www.r-graph-gallery.com/143-spider-chart-with-saveral-individuals/
+
 
 ## Close to Evanston
 
