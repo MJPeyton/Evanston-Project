@@ -86,13 +86,6 @@ data_race <- data_race %>%
 data_race <- data_race %>%
   select(-c(3:8))
 
-## Quick and Dirty Graphs
-data_race %>%
-  ggplot(aes(Per_White, Total_population)) +
-  geom_point(alpha = .05) +
-  geom_point(data=evanston, color="#4F2984", size = 2) +
-  scale_y_log10() 
-
 ## Education
 
 data_edu <- nhgis %>%
@@ -176,30 +169,50 @@ str(data)
 evanston <- data %>%
   filter(GISJOIN == "G17024582")
 
+## Quick and Dirty Graphs
+data_race %>%
+  ggplot(aes(Per_White, Total_population)) +
+  geom_point(alpha = .05) +
+  geom_point(data=evanston, color="#4F2984", size = 2) +
+  scale_y_log10() 
+
 ## Normalize data
 
 row_data <- column_to_rownames(data, var = "GISJOIN")
 
 data_scale <- row_data[,c(3:15)]
 
-data_scale <- as.matrix(data_scale)
-
 data_scale <- scale(data_scale)
 
 data_scale <- omit.na(data_scale)
+
+data_scale <- as_tibble(data_scale, rownames=NA)
 
 ## Evanston
 
 ev_data_scale <- data_scale["G17024582", ]
 
-ev_data_matrix <- as.matrix(ev_data_scale)
+ev_data_scale_vector <- as.vector(ev_data_scale)
+
+## ev_data_matrix <- as.tibble(ev_data_scale)
 
 ## Distance between Evanston and all other rows
 
 ## Try distancematrix
 ## distancevector(ev_data_scale, data_scale, type = "euclidean")
 
-dista(data_scale, ev_data_matrix, type = "euclidean")
+distances <- dista(data_scale, ev_data_scale_vector, type = "euclidean")
 
+distances <- as_tibble(distances)
 
+## Final Table
+
+distance_table <- data %>%
+  mutate(distances$V1)
+
+distance_table %>%
+  arrange(distances$V1) %>%
+  head(10)
+
+str(distance_table)
 
