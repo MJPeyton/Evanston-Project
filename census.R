@@ -1,5 +1,3 @@
-install.packages("distances")
-
 library(tidyverse)
 library(ggplot2)
 library(scales)
