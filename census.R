@@ -1,3 +1,5 @@
+install.packages("distances")
+
 library(tidyverse)
 library(ggplot2)
 library(scales)
@@ -176,7 +178,7 @@ ev_data_scale <- data_scale_select["G17024582", ]
 
 ev_data_scale_vector <- as.vector(ev_data_scale)
 
-## Distance between Evanston and all other rows
+## Distance between Evanston and other rows (Rfast package)
 
 distances <- dista(data_scale_select, ev_data_scale_vector, type = "euclidean")
 
@@ -190,9 +192,12 @@ distance_table <- data_select %>%
 
 distance_table <- as_tibble(distance_table)
 
-distance_table %>%
+top <- distance_table %>%
   arrange(`distances$V1`) %>%
-  head(10)
+  head(50)
+
+## Distances between Evanston and other rows (distances package)
+##     Problems coercing all data columns to numeric
 
 ## Visualizations
 
@@ -208,6 +213,12 @@ data_race %>%
 
 ## Visualize Distances
 
+top %>%
+  ggplot(aes(Total_population, `distances$V1`)) +
+  geom_point()
 
-
-
+distance_table %>%
+  ggplot(aes(Total_population)) +
+  geom_density() +
+  scale_x_continuous(limits = c(0, 100000))  +
+  geom_vline(xintercept = evanston$Total_population, color = "#4F2984") 
