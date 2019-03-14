@@ -1,9 +1,7 @@
-install.packages("distances")
-
 library(tidyverse)
 library(ggplot2)
 library(scales)
-library(distances)
+library(analogue)
 library(Rfast)
 
 nhgis <- read.csv("census data/nhgis0003_ds233_20175_2017_place.csv")
@@ -147,6 +145,8 @@ data <- right_join(data_loc, data_race, by="GISJOIN") %>%
 
 data <- as_tibble(data)
 
+data <- drop_na(data)
+
 ## Normalize data
 
 row_data <- column_to_rownames(data, var = "GISJOIN")
@@ -172,32 +172,39 @@ data_scale_select <- data_scale %>%
 data_select <- data %>%
   select(selected_columns)
 
+data_scale_select_df <- as.data.frame(data_scale_select)
+
 ## Evanston
 
 ev_data_scale <- data_scale_select["G17024582", ]
 
-ev_data_scale_vector <- as.vector(ev_data_scale)
+ev_data_scale_df <- as.data.frame(ev_data_scale)
+
+## Distance between Evanston and other rows (Distances package)
+
+distances <- distance(data_scale_select, ev_data_scale_df, method = "euclidean", weights = NULL, R = NULL, dist = FALSE)
 
 ## Distance between Evanston and other rows (Rfast package)
 
-distances <- dista(data_scale_select, ev_data_scale_vector, type = "euclidean")
-
-distances <- as_tibble(distances)
-
-## Final Table
+##   distances <- dista(data_scale_select, ev_data_scale_vector, type = "euclidean")
 
 distance_table <- data_select %>%
-  mutate(distances$V1) %>%
+  mutate(distances) %>%
   mutate(data$State, data$Place)
 
 distance_table <- as_tibble(distance_table)
 
-top <- distance_table %>%
-  arrange(`distances$V1`) %>%
-  head(50)
+str(distance_table)
 
-## Distances between Evanston and other rows (distances package)
-##     Problems coercing all data columns to numeric
+## Turn column distances into num column
+
+distance_table$distances <- as.numeric(distance_table$distances)
+
+str(distance_table)
+
+top <- distance_table %>%
+  arrange(distances) %>%
+  head(50)
 
 ## Visualizations
 
