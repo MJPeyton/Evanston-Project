@@ -1,12 +1,3 @@
-install.packages("distances")
-install.packages("tidyverse")
-install.packages("ggplot2")
-install.packages("scales")
-install.packages("read_csv")
-install.packages("Rfast")
-install.version("na.omit")
-install.packages("remotes")
-
 library(tidyverse)
 library(ggplot2)
 library(scales)
@@ -47,13 +38,13 @@ theme_set(theme_nu())
 
 data_race <- nhgis %>%
   select(GISJOIN,
-    AHY1E001, 
-    AHY2E002,
-    AHY2E003,
-    AHY2E004,
-    AHY2E005,
-    AHY2E006,
-    AHZAE012)
+         AHY1E001, 
+         AHY2E002,
+         AHY2E003,
+         AHY2E004,
+         AHY2E005,
+         AHY2E006,
+         AHZAE012)
 
 names(data_race) <- c(
   "GISJOIN",
@@ -66,7 +57,7 @@ names(data_race) <- c(
   "Hispanic")
 
 data_race$White <- as.numeric(data_race$White)
-  
+
 data_race <- data_race %>%
   mutate(White / Total_population) %>%
   mutate(Black / Total_population) %>%
@@ -74,7 +65,7 @@ data_race <- data_race %>%
   mutate(Asian / Total_population) %>%
   mutate(PacificIslander / Total_population) %>%
   mutate(Hispanic / Total_population)
-  
+
 data_race <- data_race %>%
   rename("Per_White" = "White/Total_population") %>%
   rename("Per_Black" = "Black/Total_population") %>%
@@ -82,7 +73,7 @@ data_race <- data_race %>%
   rename("Per_Asian" = "Asian/Total_population") %>%
   rename("Per_Pac" = "PacificIslander/Total_population") %>%
   rename("Per_Hispanic" = "Hispanic/Total_population")
-  
+
 data_race <- data_race %>%
   select(-c(3:8))
 
@@ -119,7 +110,7 @@ data_edu <- data_edu %>%
   rename("Per_MS" = "MS/Total_population") %>%
   rename("Per_Prof" = "Prof/Total_population") %>%
   rename("Per_PhD" = "PhD/Total_population") 
-  
+
 data_edu <- data_edu %>%
   select(-c(2:7))
 
@@ -134,9 +125,6 @@ names(data_houseincome) <- c(
   "GISJOIN",
   "Median_Income")
 
-
-str(data_houseincome)
-
 ## Location Details
 
 data_loc <- nhgis %>%
@@ -149,32 +137,13 @@ names(data_loc) <- c(
   "State",
   "Place")
 
-str(data_loc)
-
 ## Combine all data subsets
 
 data <- right_join(data_loc, data_race, by="GISJOIN") %>%
   right_join(data_edu, by="GISJOIN") %>%
   right_join(data_houseincome, by="GISJOIN")
 
-## Trying to make rownames for radar
-## column_to_rownames(data, var = paste(data$Place, data$State, sep = ", "))
-
-## STR Check
-
-str(data)
-
-## Evanston Check
-
-evanston <- data %>%
-  filter(GISJOIN == "G17024582")
-
-## Quick and Dirty Graphs
-data_race %>%
-  ggplot(aes(Per_White, Total_population)) +
-  geom_point(alpha = .05) +
-  geom_point(data=evanston, color="#4F2984", size = 2) +
-  scale_y_log10() 
+data <- as_tibble(data)
 
 ## Normalize data
 
@@ -184,35 +153,61 @@ data_scale <- row_data[,c(3:15)]
 
 data_scale <- scale(data_scale)
 
-data_scale <- omit.na(data_scale)
-
 data_scale <- as_tibble(data_scale, rownames=NA)
+
+## Select Columns to Include
+
+selected_columns <- c("Total_population",
+                      "Per_White",
+                      "Per_Black",
+                      "Per_BS",
+                      "Per_MS",
+                      "Median_Income")
+
+data_scale_select <- data_scale %>%
+  select(selected_columns)
+
+data_select <- data %>%
+  select(selected_columns)
 
 ## Evanston
 
-ev_data_scale <- data_scale["G17024582", ]
+ev_data_scale <- data_scale_select["G17024582", ]
 
 ev_data_scale_vector <- as.vector(ev_data_scale)
 
-## ev_data_matrix <- as.tibble(ev_data_scale)
-
 ## Distance between Evanston and all other rows
 
-## Try distancematrix
-## distancevector(ev_data_scale, data_scale, type = "euclidean")
-
-distances <- dista(data_scale, ev_data_scale_vector, type = "euclidean")
+distances <- dista(data_scale_select, ev_data_scale_vector, type = "euclidean")
 
 distances <- as_tibble(distances)
 
 ## Final Table
 
-distance_table <- data %>%
-  mutate(distances$V1)
+distance_table <- data_select %>%
+  mutate(distances$V1) %>%
+  mutate(data$State, data$Place)
+
+distance_table <- as_tibble(distance_table)
 
 distance_table %>%
-  arrange(distances$V1) %>%
+  arrange(`distances$V1`) %>%
   head(10)
 
-str(distance_table)
+## Visualizations
+
+## Quick and Dirty Graphs
+evanston <- data %>%
+  filter(GISJOIN == "G17024582")
+
+data_race %>%
+  ggplot(aes(Per_White, Total_population)) +
+  geom_point(alpha = .05) +
+  geom_point(data=evanston, color="#4F2984", size = 2) +
+  scale_y_log10() 
+
+## Visualize Distances
+
+
+
 
