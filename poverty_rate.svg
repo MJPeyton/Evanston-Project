@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 360.00 216.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    line, polyline, path, rect, circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<rect x='0.00' y='0.00' width='360.00' height='216.00' style='stroke-width: 1.07; fill: #FFFFFF;' />
+<defs>
+  <clipPath id='cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ=='>
+    <rect x='41.87' y='5.48' width='312.65' height='160.42' />
+  </clipPath>
+</defs>
+<polyline points='41.87,158.61 354.52,158.61 ' style='stroke-width: 0.43; stroke: #E0E0E0; stroke-linecap: butt;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<polyline points='41.87,104.30 354.52,104.30 ' style='stroke-width: 0.43; stroke: #E0E0E0; stroke-linecap: butt;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<polyline points='41.87,49.99 354.52,49.99 ' style='stroke-width: 0.43; stroke: #E0E0E0; stroke-linecap: butt;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<polyline points='72.12,165.90 72.12,5.48 ' style='stroke-width: 0.43; stroke: #E0E0E0; stroke-linecap: butt;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<polyline points='122.55,165.90 122.55,5.48 ' style='stroke-width: 0.43; stroke: #E0E0E0; stroke-linecap: butt;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<polyline points='172.98,165.90 172.98,5.48 ' style='stroke-width: 0.43; stroke: #E0E0E0; stroke-linecap: butt;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<polyline points='223.41,165.90 223.41,5.48 ' style='stroke-width: 0.43; stroke: #E0E0E0; stroke-linecap: butt;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<polyline points='273.84,165.90 273.84,5.48 ' style='stroke-width: 0.43; stroke: #E0E0E0; stroke-linecap: butt;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<polyline points='324.26,165.90 324.26,5.48 ' style='stroke-width: 0.43; stroke: #E0E0E0; stroke-linecap: butt;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<rect x='49.43' y='22.38' width='45.39' height='136.22' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; fill: #595959;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<rect x='99.86' y='47.05' width='45.39' height='111.56' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; fill: #595959;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<rect x='150.29' y='38.23' width='45.39' height='120.38' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; fill: #595959;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<rect x='200.72' y='55.55' width='45.39' height='103.06' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; fill: #595959;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<rect x='251.14' y='38.38' width='45.39' height='120.22' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; fill: #595959;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<rect x='301.57' y='12.77' width='45.39' height='145.83' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; fill: #595959;' clip-path='url(#cpNDEuODY4M3wzNTQuNTIxfDE2NS44OTd8NS40Nzk0NQ==)' />
+<defs>
+  <clipPath id='cpMHwzNjB8MjE2fDA='>
+    <rect x='0.00' y='0.00' width='360.00' height='216.00' />
+  </clipPath>
+</defs>
+<polyline points='41.87,165.90 41.87,5.48 ' style='stroke-width: 1.07; stroke-linecap: butt;' clip-path='url(#cpMHwzNjB8MjE2fDA=)' />
+<g clip-path='url(#cpMHwzNjB8MjE2fDA=)'><text x='18.53' y='161.79' style='font-size: 8.80px; font-family: Avenir Next;' textLength='18.41px' lengthAdjust='spacingAndGlyphs'>0.00</text></g>
+<g clip-path='url(#cpMHwzNjB8MjE2fDA=)'><text x='18.53' y='107.49' style='font-size: 8.80px; font-family: Avenir Next;' textLength='18.41px' lengthAdjust='spacingAndGlyphs'>0.01</text></g>
+<g clip-path='url(#cpMHwzNjB8MjE2fDA=)'><text x='18.53' y='53.18' style='font-size: 8.80px; font-family: Avenir Next;' textLength='18.41px' lengthAdjust='spacingAndGlyphs'>0.02</text></g>
+<polyline points='41.87,165.90 354.52,165.90 ' style='stroke-width: 1.07; stroke-linecap: butt;' clip-path='url(#cpMHwzNjB8MjE2fDA=)' />
+<g clip-path='url(#cpMHwzNjB8MjE2fDA=)'><text x='43.05' y='186.24' style='font-size: 8.80px; font-family: Avenir Next;' textLength='58.14px' lengthAdjust='spacingAndGlyphs'>Annapolis city</text></g>
+<g clip-path='url(#cpMHwzNjB8MjE2fDA=)'><text x='88.34' y='186.24' style='font-size: 8.80px; font-family: Avenir Next;' textLength='68.43px' lengthAdjust='spacingAndGlyphs'>Chapel Hill town</text></g>
+<g clip-path='url(#cpMHwzNjB8MjE2fDA=)'><text x='145.85' y='186.24' style='font-size: 8.80px; font-family: Avenir Next;' textLength='54.27px' lengthAdjust='spacingAndGlyphs'>Evanston city</text></g>
+<g clip-path='url(#cpMHwzNjB8MjE2fDA=)'><text x='186.63' y='186.24' style='font-size: 8.80px; font-family: Avenir Next;' textLength='73.55px' lengthAdjust='spacingAndGlyphs'>New Rochelle city</text></g>
+<g clip-path='url(#cpMHwzNjB8MjE2fDA=)'><text x='247.28' y='186.24' style='font-size: 8.80px; font-family: Avenir Next;' textLength='53.12px' lengthAdjust='spacingAndGlyphs'>Towson CDP</text></g>
+<g clip-path='url(#cpMHwzNjB8MjE2fDA=)'><text x='290.51' y='186.24' style='font-size: 8.80px; font-family: Avenir Next;' textLength='67.51px' lengthAdjust='spacingAndGlyphs'>White Plains city</text></g>
+<g clip-path='url(#cpMHwzNjB8MjE2fDA=)'><text x='184.64' y='207.99' style='font-size: 11.00px; fill: #4D4D4D; font-family: Avenir Next;' textLength='27.10px' lengthAdjust='spacingAndGlyphs'>Place</text></g>
+<g clip-path='url(#cpMHwzNjB8MjE2fDA=)'><text transform='translate(13.26,118.88) rotate(-90)' style='font-size: 11.00px; fill: #4D4D4D; font-family: Avenir Next;' textLength='66.38px' lengthAdjust='spacingAndGlyphs'>Poverty_Rate</text></g>
+</svg>

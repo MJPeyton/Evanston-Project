@@ -10,6 +10,8 @@ library(svglite)
 
 nhgis <- read.csv("census data/nhgis0003_ds233_20175_2017_place.csv")
 
+custom_font <- "Avenir Next"
+
 theme_nu <- function () {
   custom_font <- "Avenir Next"
   theme_minimal() %+replace%
@@ -194,7 +196,7 @@ head(distances)
 
 distance_table <- data_select %>%
   mutate(distances) %>%
-  mutate(data$State, data$Place)
+  mutate(State = data$State, Place = data$Place)
 
 distance_table <- as_tibble(distance_table)
 
@@ -204,7 +206,7 @@ distance_table$distances <- as.numeric(distance_table$distances)
 
 top <- distance_table %>%
   arrange(distances) %>%
-  head(6)
+  top_n(6, wt=desc(distances))
 
 evanston <- data %>%
   filter(GISJOIN == "G17024582")
@@ -236,7 +238,7 @@ distance_table %>%
   geom_point(data=evanston, color="#4F2984", size = 2) +
   theme(legend.position="none")
   
-ggsave("poverty_heat", device = "png", width = 5, height = 3, units = "in", dpi = 300)
+ggsave("poverty_heat.svg", device = "svg", width = 5, height = 3, units = "in", dpi = 300)
 
 ## Visualize Distances
 
@@ -250,7 +252,16 @@ distance_table %>%
   scale_x_continuous(limits = c(0, 8))  
 
 ## Charts for poster
+top %>%
+  ggplot(aes(Place, Total_population)) +
+  geom_bar(stat = "identity")
 
 top %>%
-  ggplot(aes(Total_population)) + 
-  geom_bar()
+  ggplot(aes(Place, Poverty_Rate)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  geom_text(aes(label = Poverty_Rate), hjust=-0.1, family=custom_font)
+  
+
+ggsave("poverty_rate.png", device = "png", width = 5, height = 3, units = "in", dpi = 300)
+           
