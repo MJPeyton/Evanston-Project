@@ -1,7 +1,10 @@
+install.packages("hexbin")
+
 library(tidyverse)
 library(ggplot2)
 library(scales)
 library(analogue)
+library(hexbin)
 
 nhgis <- read.csv("census data/nhgis0003_ds233_20175_2017_place.csv")
 
@@ -58,20 +61,12 @@ names(data_race) <- c(
 data_race$White <- as.numeric(data_race$White)
 
 data_race <- data_race %>%
-  mutate(White / Total_population) %>%
-  mutate(Black / Total_population) %>%
-  mutate(AmericanIndian / Total_population) %>%
-  mutate(Asian / Total_population) %>%
-  mutate(PacificIslander / Total_population) %>%
-  mutate(Hispanic / Total_population)
-
-data_race <- data_race %>%
-  rename("Per_White" = "White/Total_population") %>%
-  rename("Per_Black" = "Black/Total_population") %>%
-  rename("Per_AmIndian" = "AmericanIndian/Total_population") %>%
-  rename("Per_Asian" = "Asian/Total_population") %>%
-  rename("Per_Pac" = "PacificIslander/Total_population") %>%
-  rename("Per_Hispanic" = "Hispanic/Total_population")
+  mutate("Per_White" = White / Total_population) %>%
+  mutate("Per_Black" = Black / Total_population) %>%
+  mutate("Per_AmIndian" = AmericanIndian / Total_population) %>%
+  mutate("Per_Asian" = Asian / Total_population) %>%
+  mutate("Per_Pac" = PacificIslander / Total_population) %>%
+  mutate("Per_Hispanic" = Hispanic / Total_population)
 
 data_race <- data_race %>%
   select(-c(3:8))
@@ -97,32 +92,39 @@ names(data_edu) <- c(
   "PhD")
 
 data_edu <- data_edu %>%
-  mutate(HS/Total_population) %>%
-  mutate(BS/Total_population) %>%
-  mutate(MS/Total_population) %>%
-  mutate(Prof/Total_population) %>%
-  mutate(PhD/Total_population)
-
-data_edu <- data_edu %>%
-  rename("Per_HS" = "HS/Total_population") %>%
-  rename("Per_BS" = "BS/Total_population") %>%
-  rename("Per_MS" = "MS/Total_population") %>%
-  rename("Per_Prof" = "Prof/Total_population") %>%
-  rename("Per_PhD" = "PhD/Total_population") 
+  mutate("Per_HS" = HS/Total_population) %>%
+  mutate("Per_BS" = BS/Total_population) %>%
+  mutate("Per_MS" = MS/Total_population) %>%
+  mutate("Per_Prof" = Prof/Total_population) %>%
+  mutate("Per_PhD" = PhD/Total_population)
 
 data_edu <- data_edu %>%
   select(-c(2:7))
 
-
-## Median Household Income
+## Household Income / Poverty
 
 data_houseincome <- nhgis %>%
   select(GISJOIN, 
-         AH1PE001)
+         AH1PE001,
+         AH1JE001,
+         AH1JM002,
+         AH1JM003
+         )
 
 names(data_houseincome) <- c(
   "GISJOIN",
-  "Median_Income")
+  "Median_Income",
+  "Poverty_count",
+  "Under .5",
+  ".5 to .99")
+
+data_houseincome <- data_houseincome %>%
+  mutate("Below_Poverty" = rowSums(.[4:5])) %>%
+  mutate("Poverty_Rate" = Below_Poverty / `Poverty_count`) %>%
+  select(c("GISJOIN",
+           "Median_Income",
+           "Poverty_Rate"))
+
 
 ## Location Details
 
@@ -150,7 +152,7 @@ data <- drop_na(data)
 
 row_data <- column_to_rownames(data, var = "GISJOIN")
 
-data_scale <- row_data[,c(3:15)]
+data_scale <- row_data[,-c(1:2)]
 
 data_scale <- scale(data_scale)
 
@@ -162,7 +164,8 @@ selected_columns <- c("Total_population",
                       "Per_White",
                       "Per_Black",
                       "Per_BS",
-                      "Per_MS",
+                      "Per_Prof",
+                      "Poverty_Rate",
                       "Median_Income")
 
 data_scale_select <- data_scale %>%
@@ -183,9 +186,9 @@ ev_data_scale_df <- as.data.frame(ev_data_scale)
 
 distances <- distance(data_scale_select, ev_data_scale_df, method = "euclidean", weights = NULL, R = NULL, dist = FALSE)
 
-## Distance between Evanston and other rows (Rfast package)
+head(distances)
 
-##   distances <- dista(data_scale_select, ev_data_scale_vector, type = "euclidean")
+## Created Distance Table
 
 distance_table <- data_select %>%
   mutate(distances) %>%
@@ -193,30 +196,43 @@ distance_table <- data_select %>%
 
 distance_table <- as_tibble(distance_table)
 
-str(distance_table)
-
 ## Turn column distances into num column
 
 distance_table$distances <- as.numeric(distance_table$distances)
 
-str(distance_table)
-
 top <- distance_table %>%
   arrange(distances) %>%
-  head(50) %>%
-  write_csv("best_matches.csv")
+  head(6)
 
 ## Visualizations
 
-## Quick and Dirty Graphs
+## Income vs Poverty
+
+## More: https://www.r-graph-gallery.com/2d-density-plot-with-ggplot2/
+
 evanston <- data %>%
   filter(GISJOIN == "G17024582")
 
-data_race %>%
-  ggplot(aes(Per_White, Total_population)) +
+distance_table %>%
+  ggplot(aes(Median_Income, Poverty_Rate)) +
   geom_point(alpha = .05) +
+  geom_point(data=top, color="red", size = 2) +
   geom_point(data=evanston, color="#4F2984", size = 2) +
-  scale_y_log10() 
+  scale_y_log10()
+
+distance_table %>%
+  ggplot(aes(Median_Income, Poverty_Rate)) +
+  geom_hex(bins = 50) +
+  geom_point(data=top, color="red", size = 2) +
+  geom_point(data=evanston, color="#4F2984", size = 2) +
+  scale_y_continuous(limits = c(0, 1))  
+
+distance_table %>%
+  ggplot(aes(Median_Income, Poverty_Rate)) +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon", colour="white") +
+  geom_point(data=top, color="red", size = 2) +
+  geom_point(data=evanston, color="#4F2984", size = 2) +
+  theme(legend.position="none")
 
 ## Visualize Distances
 
@@ -225,7 +241,12 @@ top %>%
   geom_point()
 
 distance_table %>%
-  ggplot(aes(Total_population)) +
+  ggplot(aes(distances)) +
   geom_density() +
-  scale_x_continuous(limits = c(0, 100000))  +
-  geom_vline(xintercept = evanston$Total_population, color = "#4F2984") 
+  scale_x_continuous(limits = c(0, 8))  
+
+## Charts for poster
+
+top %>%
+  ggplot(aes(Total_population)) + 
+  geom_bar()
