@@ -2,7 +2,6 @@ library(tidyverse)
 library(ggplot2)
 library(scales)
 library(analogue)
-library(Rfast)
 
 nhgis <- read.csv("census data/nhgis0003_ds233_20175_2017_place.csv")
 
@@ -204,7 +203,8 @@ str(distance_table)
 
 top <- distance_table %>%
   arrange(distances) %>%
-  head(50)
+  head(50) %>%
+  write_csv("best_matches.csv")
 
 ## Visualizations
 
@@ -221,7 +221,7 @@ data_race %>%
 ## Visualize Distances
 
 top %>%
-  ggplot(aes(Total_population, `distances$V1`)) +
+  ggplot(aes(Total_population, distances)) +
   geom_point()
 
 distance_table %>%
