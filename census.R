@@ -1,10 +1,12 @@
 install.packages("hexbin")
+install.packages("svglite")
 
 library(tidyverse)
 library(ggplot2)
 library(scales)
 library(analogue)
 library(hexbin)
+library(svglite)
 
 nhgis <- read.csv("census data/nhgis0003_ds233_20175_2017_place.csv")
 
@@ -204,14 +206,14 @@ top <- distance_table %>%
   arrange(distances) %>%
   head(6)
 
+evanston <- data %>%
+  filter(GISJOIN == "G17024582")
+
 ## Visualizations
 
 ## Income vs Poverty
 
 ## More: https://www.r-graph-gallery.com/2d-density-plot-with-ggplot2/
-
-evanston <- data %>%
-  filter(GISJOIN == "G17024582")
 
 distance_table %>%
   ggplot(aes(Median_Income, Poverty_Rate)) +
@@ -233,6 +235,8 @@ distance_table %>%
   geom_point(data=top, color="red", size = 2) +
   geom_point(data=evanston, color="#4F2984", size = 2) +
   theme(legend.position="none")
+  
+ggsave("poverty_heat", device = "png", width = 5, height = 3, units = "in", dpi = 300)
 
 ## Visualize Distances
 
