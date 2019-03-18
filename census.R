@@ -1,11 +1,14 @@
-install.packages("distances")
+install.packages("devtools")
+devtools::install_github('cran/ggplot2') 
 
+library(devtools)
 library(tidyverse)
 library(ggplot2)
 library(scales)
 library(hexbin)
 library(svglite)
 library(distances)
+library(ggrepel)
 
 custom_font <- "Avenir Next"
 
@@ -114,7 +117,7 @@ data_houseincome <- nhgis %>%
          AH1JE001,
          AH1JM002,
          AH1JM003
-         )
+  )
 
 names(data_houseincome) <- c(
   "GISJOIN",
@@ -153,15 +156,21 @@ data <- as_tibble(data)
 
 data <- drop_na(data)
 
-## Normalize data
+ev_data <- data %>%
+  filter(GISJOIN == "G17024582")
 
-row_data <- column_to_rownames(data, var = "GISJOIN")
+noev_data <- data %>%
+  filter(GISJOIN != "G17024582")
 
-data_scale <- row_data[,-c(1:2)]
+ev_data_bind <- rbind(ev_data, noev_data)
 
-data_scale <- scale(data_scale)
+row_data <- ev_data_bind
 
-data_scale <- as_tibble(data_scale, rownames=NA)
+## Select Data
+
+## row_data <- row_data[,-c(2:3)]
+## row_data <- scale(row_data)
+## row_data <- as.data.frame(row_data)
 
 ## Select Columns to Include
 
@@ -173,44 +182,42 @@ selected_columns <- c("Total_population",
                       "Per_HS",
                       "Per_BS",
                       "Per_Prof",
+                      "Per_PhD",
                       "Poverty_Rate",
                       "Median_Income")
 
-data_scale_select <- data_scale %>%
-  select(selected_columns)
+data_select <- row_data %>%
+  select(selected_columns) %>%
+  scale() %>%
+  as.data.frame()
 
-data_select <- data %>%
-  select(selected_columns)
+data_select_noscale <- row_data %>%
+  select(selected_columns) %>%
+  as.data.frame()
 
-data_scale_select_df <- as.data.frame(data_scale_select)
-
-## Evanston
-
-ev_data_scale <- data_scale_select["G17024582", ]
-
-ev_data_scale_df <- as.data.frame(ev_data_scale)
+data_select <- data_select %>%
+  mutate(GISJOIN = row_data$GISJOIN)
 
 ## Distance between Evanston and other rows (Distances package)
 
-distances <- distance(data_scale_select, ev_data_scale_df, method = "euclidean", weights = NULL, R = NULL, dist = FALSE)
+distance_weights <- c(100, 2, 2, 1, 1, 1, 1, 2, 2, 4, 10)
 
-head(distances)
+distances <- distances(data_select, id_variable = "GISJOIN", normalize = "studentize", weights = distance_weights)
 
 ## Created Distance Table
 
-distance_table <- data_select %>%
-  mutate(distances) %>%
-  mutate(State = data$State, Place = data$Place)
+distance_table <- data_select_noscale %>%
+  mutate(distances = distances[1]) %>%
+  mutate(State = row_data$State, Place = row_data$Place) %>%
+  mutate(GISJOIN = row_data$GISJOIN)
 
 distance_table <- as_tibble(distance_table)
 
-## Turn column distances into num column
-
-distance_table$distances <- as.numeric(distance_table$distances)
+## distance_table$distances <- as.numeric(distance_table$distances)
 
 top <- distance_table %>%
-  arrange(distances) %>%
-  top_n(6, wt=desc(distances))
+  top_n(6, wt=desc(distances)) %>%
+  arrange(distances)
 
 evanston <- data %>%
   filter(GISJOIN == "G17024582")
@@ -226,23 +233,42 @@ distance_table %>%
   geom_point(alpha = .05) +
   geom_point(data=top, color="red", size = 2) +
   geom_point(data=evanston, color="#4F2984", size = 2) +
+  geom_label_repel(data = top, aes(label=Place),hjust=0, vjust=0) +
   scale_y_log10()
 
-distance_table %>%
-  ggplot(aes(Median_Income, Poverty_Rate)) +
-  geom_hex(bins = 50) +
-  geom_point(data=top, color="red", size = 2) +
-  geom_point(data=evanston, color="#4F2984", size = 2) +
-  scale_y_continuous(limits = c(0, 1))  
+## Population vs Median Income
 
 distance_table %>%
-  ggplot(aes(Median_Income, Poverty_Rate)) +
-  stat_density_2d(aes(fill = ..level..), geom = "polygon", colour="white") +
+  ggplot(aes(Median_Income, Total_population)) +
+  stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
+  scale_fill_gradient(low="pink", high="blue") +
   geom_point(data=top, color="red", size = 2) +
   geom_point(data=evanston, color="#4F2984", size = 2) +
-  theme(legend.position="none")
-  
-ggsave("poverty_heat.svg", device = "svg", width = 5, height = 3, units = "in", dpi = 300)
+  scale_y_log10() +
+  coord_cartesian(xlim=c(0, 100000)) +
+  theme(legend.position = "none")
+
+# distance_table %>%
+#   ggplot(aes(Median_Income, Total_population)) +
+#   stat_density_2d(aes(fill = ..level..), geom = "polygon", colour="white") +
+#   scale_fill_distiller(palette= "PuRd", direction=1) +
+#   geom_point(data=top, color="red", size = 2) +
+#   geom_point(data=evanston, color="#4F2984", size = 2) +
+#   scale_y_log10()
+
+## Poverty vs HS Education
+
+distance_table %>%
+  ggplot(aes(Per_HS, Poverty_Rate)) +
+  stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
+  scale_fill_gradient(low="pink", high="blue") +
+  geom_point(data=top, color="red", size = 2) +
+  geom_point(data=evanston, color="#4F2984", size = 2) +
+  scale_y_log10() +
+  coord_cartesian(xlim=c(0, .4)) +
+  theme(legend.position = "none")
+
+ggsave("poverty_raster.svg", device = "svg", width = 5, height = 3, units = "in", dpi = 300)
 
 ## Visualize Distances
 
@@ -253,19 +279,27 @@ top %>%
 distance_table %>%
   ggplot(aes(distances)) +
   geom_density() +
-  scale_x_continuous(limits = c(0, 8))  
+  scale_x_continuous(limits = c(0, 15))  
 
 ## Charts for poster
 top %>%
   ggplot(aes(Place, Total_population)) +
   geom_bar(stat = "identity")
 
+#Poverty Rate
 top %>%
   ggplot(aes(Place, Poverty_Rate)) +
   geom_bar(stat = "identity") +
-  coord_flip() +
   geom_text(aes(label = Poverty_Rate), hjust=-0.1, family=custom_font)
-  
 
-ggsave("poverty_rate.png", device = "png", width = 5, height = 3, units = "in", dpi = 300)
-           
+ggsave("poverty_rate.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
+
+#Median Income
+
+top %>%
+  ggplot(aes(Place, Median_Income)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = Median_Income), hjust=-0.1, family=custom_font)
+
+ggsave("median_income.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
+
