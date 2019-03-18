@@ -1,12 +1,12 @@
-install.packages("hexbin")
-install.packages("svglite")
+install.packages("distances")
 
 library(tidyverse)
 library(ggplot2)
 library(scales)
-library(analogue)
 library(hexbin)
 library(svglite)
+library(analogue)
+library(distances)
 
 nhgis <- read.csv("census data/nhgis0003_ds233_20175_2017_place.csv")
 
@@ -167,6 +167,9 @@ data_scale <- as_tibble(data_scale, rownames=NA)
 selected_columns <- c("Total_population",
                       "Per_White",
                       "Per_Black",
+                      "Per_Asian",
+                      "Per_Hispanic",
+                      "Per_HS",
                       "Per_BS",
                       "Per_Prof",
                       "Poverty_Rate",
