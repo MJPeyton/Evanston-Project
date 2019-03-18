@@ -5,10 +5,7 @@ library(ggplot2)
 library(scales)
 library(hexbin)
 library(svglite)
-library(analogue)
 library(distances)
-
-nhgis <- read.csv("census data/nhgis0003_ds233_20175_2017_place.csv")
 
 custom_font <- "Avenir Next"
 
@@ -39,6 +36,10 @@ theme_nu <- function () {
 }
 
 theme_set(theme_nu())
+
+## Data Import
+
+nhgis <- read.csv("census data/nhgis0003_ds233_20175_2017_place.csv")
 
 ## Population and Race
 
