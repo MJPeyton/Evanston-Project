@@ -290,6 +290,8 @@ top %>%
 top %>%
   ggplot(aes(Place, Poverty_Rate)) +
   geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, .5)) +
   geom_text(aes(label = Poverty_Rate), hjust=-0.1, family=custom_font)
 
 ggsave("poverty_rate.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
@@ -298,6 +300,7 @@ ggsave("poverty_rate.svg", device = "svg", width = 5, height = 4, units = "in", 
 top %>%
   ggplot(aes(Place, Median_Income)) +
   geom_bar(stat = "identity") +
+  coord_flip() +
   geom_text(aes(label = Median_Income), hjust=-0.1, family=custom_font)
 
 ggsave("median_income.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
@@ -355,3 +358,36 @@ top %>%
 geom_text(aes(label = Per_White), hjust=-0.1, family=custom_font)
 
 ggsave("per_White.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
+
+# Race - Black
+
+top %>%
+  ggplot(aes(Place, Per_Black)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, .8))  +
+  geom_text(aes(label = Per_Black), hjust=-0.1, family=custom_font)
+
+ggsave("per_Black.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
+
+# Race - Asian
+
+top %>%
+  ggplot(aes(Place, Per_Asian)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, .8))  +
+  geom_text(aes(label = Per_Asian), hjust=-0.1, family=custom_font)
+
+ggsave("per_Asian.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
+
+# Race - Hispanic
+
+top %>%
+  ggplot(aes(Place, Per_Hispanic)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, .8))  +
+  geom_text(aes(label = Per_Hispanic), hjust=-0.1, family=custom_font)
+
+ggsave("per_Hispanic.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
