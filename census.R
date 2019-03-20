@@ -295,7 +295,6 @@ top %>%
 ggsave("poverty_rate.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
 
 #Median Income
-
 top %>%
   ggplot(aes(Place, Median_Income)) +
   geom_bar(stat = "identity") +
@@ -303,3 +302,56 @@ top %>%
 
 ggsave("median_income.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
 
+# Highest Education Level - HS
+top %>%
+  ggplot(aes(Place, Per_HS)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, .25)) +
+  geom_text(aes(label = Per_HS), hjust=-0.1, family=custom_font)
+
+ggsave("per_hs.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
+
+# Highest Education Level - BS
+
+top %>%
+  ggplot(aes(Place, Per_BS)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, .25))  +
+  geom_text(aes(label = Per_BS), hjust=-0.1, family=custom_font)
+
+ggsave("per_bs.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
+
+# Highest Education Level - Prof
+
+top %>%
+  ggplot(aes(Place, Per_Prof)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, .25))  +
+  geom_text(aes(label = Per_Prof), hjust=-0.1, family=custom_font)
+
+ggsave("per_prof.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
+
+# Highest Education Level - PhD
+
+top %>%
+  ggplot(aes(Place, Per_PhD)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, .25))  +
+  geom_text(aes(label = Per_PhD), hjust=-0.1, family=custom_font)
+
+ggsave("per_PhD.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
+
+# Race - White
+
+top %>%
+  ggplot(aes(Place, Per_White)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, .8))  +
+geom_text(aes(label = Per_White), hjust=-0.1, family=custom_font)
+
+ggsave("per_White.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
