@@ -1,6 +1,3 @@
-install.packages("devtools")
-devtools::install_github('cran/ggplot2') 
-
 library(devtools)
 library(tidyverse)
 library(ggplot2)
@@ -41,6 +38,10 @@ theme_nu <- function () {
 theme_set(theme_nu())
 
 ## Data Import
+
+# Data: Steven Manson, Jonathan Schroeder, David Van Riper, and Steven Ruggles. IPUMS National Historical Geographic Information System: Version 13.0 [Database]. Minneapolis: University of Minnesota. 2018. http://doi.org/10.18128/D050.V13.0
+
+# Map: https://commons.wikimedia.org/wiki/Category:Blank_maps_of_the_United_States#/media/File:Blank_US_Map_(states_only).svg
 
 nhgis <- read.csv("census data/nhgis0003_ds233_20175_2017_place.csv")
 
@@ -291,7 +292,7 @@ top %>%
   ggplot(aes(Place, Poverty_Rate)) +
   geom_bar(stat = "identity") +
   coord_flip() +
-  scale_y_continuous(limits = c(0, .5)) +
+  scale_y_continuous(limits = c(0, 1)) +
   geom_text(aes(label = Poverty_Rate), hjust=-0.1, family=custom_font)
 
 ggsave("poverty_rate.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
@@ -336,6 +337,8 @@ top %>%
   geom_text(aes(label = Per_Prof), hjust=-0.1, family=custom_font)
 
 ggsave("per_prof.svg", device = "svg", width = 5, height = 4, units = "in", dpi = 300)
+
+## Explanation of Professional degrees: https://www.census.gov/topics/education/educational-attainment/about.html
 
 # Highest Education Level - PhD
 
