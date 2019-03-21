@@ -1,7 +1,9 @@
 # Evanston Data Project
 By Matt Peyton  
   
-The data and code for my submission to [Northwestern University's City of Evanston Open Data Contest.](https://sites.northwestern.edu/lovedataweek/contest/) 
+The data and code for my submission to [Northwestern University's City of Evanston Open Data Contest.](https://sites.northwestern.edu/lovedataweek/contest/)
+
+![My image](https://raw.githubusercontent.com/MJPeyton/Evanston_Data_Contest/master/Poster.png)
 
 #### Sources
 Steven Manson, Jonathan Schroeder, David Van Riper, and Steven Ruggles. IPUMS National Historical Geographic Information 	System: Version 13.0 [Database]. Minneapolis: University of Minnesota. 2018. http://doi.org/10.18128/D050.V13.0  
