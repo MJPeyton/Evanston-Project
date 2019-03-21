@@ -1,8 +1,6 @@
-library(devtools)
 library(tidyverse)
 library(ggplot2)
 library(scales)
-library(hexbin)
 library(svglite)
 library(distances)
 library(ggrepel)
@@ -169,12 +167,6 @@ row_data <- ev_data_bind
 
 ## Select Data
 
-## row_data <- row_data[,-c(2:3)]
-## row_data <- scale(row_data)
-## row_data <- as.data.frame(row_data)
-
-## Select Columns to Include
-
 selected_columns <- c("Total_population",
                       "Per_White",
                       "Per_Black",
@@ -205,6 +197,8 @@ distance_weights <- c(100, 2, 2, 1, 1, 1, 1, 2, 2, 4, 10)
 
 distances <- distances(data_select, id_variable = "GISJOIN", normalize = "studentize", weights = distance_weights)
 
+## Note: These distances are pretty arbitrary, but after some playing around I got results that were close to what I wanted. I felt the need to introduce weights because of the exagerated effect that each percentage of race and education was having.
+
 ## Created Distance Table
 
 distance_table <- data_select_noscale %>%
@@ -213,8 +207,6 @@ distance_table <- data_select_noscale %>%
   mutate(GISJOIN = row_data$GISJOIN)
 
 distance_table <- as_tibble(distance_table)
-
-## distance_table$distances <- as.numeric(distance_table$distances)
 
 top <- distance_table %>%
   top_n(6, wt=desc(distances)) %>%
@@ -225,9 +217,9 @@ evanston <- data %>%
 
 ## Visualizations
 
-## Income vs Poverty
+## Fun but not included
 
-## More: https://www.r-graph-gallery.com/2d-density-plot-with-ggplot2/
+## Income vs Poverty
 
 distance_table %>%
   ggplot(aes(Median_Income, Poverty_Rate)) +
@@ -283,6 +275,7 @@ distance_table %>%
   scale_x_continuous(limits = c(0, 15))  
 
 ## Charts for poster
+
 top %>%
   ggplot(aes(Place, Total_population)) +
   geom_bar(stat = "identity")
